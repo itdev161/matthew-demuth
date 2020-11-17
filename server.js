@@ -188,17 +188,14 @@ app.post(
       try {
         // Get the user who created the post
         const user = await User.findById(req.user.id);
-
         // Create a new post
         const post = new Post({
           user: user.id,
           title: title,
           body: body
         });
-
         // Save to the db and return
         await post.save();
-
         res.json(post);
       } catch (error) {
         console.error(error);
@@ -207,6 +204,21 @@ app.post(
     }
   }
 );
+
+/**
+ * @route GET api/posts
+ * @desc Get posts
+ */
+app.get('/api/posts', auth, async (req, res) => {
+  try {
+    const posts = await Post.find().sort({ date: -1 });
+
+    res.json(posts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
 
 // Connection listener
 const port = 5000;
